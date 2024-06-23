@@ -35,6 +35,10 @@
 
 #include <libusb.h>
 #include "librx888.h"
+#include "si5351.h"
+
+static const double REFERENCE = 27000000;
+static const double REFERENCE_PPM = 0.0;
 
 enum rx888_async_status {
     RX888_INACTIVE = 0,
@@ -166,7 +170,8 @@ int rx888_set_sample_rate(rx888_dev_t *dev, uint32_t samp_rate)
 
     dev->sample_rate = samp_rate;
 
-    rx888_send_command(dev->dev_handle, STARTADC, samp_rate);
+    //rx888_send_command(dev->dev_handle, STARTADC, samp_rate);
+    start_adc(dev->dev_handle, samp_rate, REFERENCE, REFERENCE_PPM);
 
     return 0;
 }
@@ -440,7 +445,8 @@ int rx888_open(rx888_dev_t **out_dev, uint32_t index)
     *out_dev = dev;
     rx888_send_command(dev->dev_handle, R820T2STDBY, 0);
     rx888_send_command(dev->dev_handle, STOPFX3, 0);
-    rx888_send_command(dev->dev_handle, STARTADC, dev->sample_rate);
+    //rx888_send_command(dev->dev_handle, STARTADC, dev->sample_rate);
+    start_adc(dev->dev_handle, dev->sample_rate, REFERENCE, REFERENCE_PPM);
     rx888_send_command(dev->dev_handle, STARTFX3, 0);
     return 0;
 err:
@@ -653,6 +659,7 @@ int rx888_read_async(rx888_dev_t *dev, rx888_read_async_cb_t cb, void *ctx,
     }
     
     //rx888_send_command(dev->dev_handle, STARTADC, dev->sample_rate);
+    //start_adc(dev->dev_handle, dev->sample_rate, REFERENCE, REFERENCE_PPM);
     //rx888_send_command(dev->dev_handle, STARTFX3, 0);
 
     while (RX888_INACTIVE != dev->async_status) {
