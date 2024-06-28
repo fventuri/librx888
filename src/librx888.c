@@ -163,7 +163,7 @@ int rx888_set_sample_rate(rx888_dev_t *dev, uint32_t samp_rate)
         return -1;
 
     /* check if the rate is supported by the device */
-    if ((samp_rate <= 10000) || (samp_rate > 150000000)) {
+    if ((samp_rate <= 10000) || (samp_rate > 200000000)) {
         fprintf(stderr, "Invalid sample rate: %u Hz\n", samp_rate);
         return -EINVAL;
     }
